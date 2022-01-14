@@ -49,9 +49,6 @@ jobs:
           sed -i 's/#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
           ./scripts/feeds update -a
           ./scripts/feeds install -a
-          
-      - name: Fix ssr
-        run: make dirclean
 
       - name: Generate configuration file
         run: make defconfig
@@ -61,6 +58,9 @@ jobs:
           make download -j8
           find dl -size -1024c -exec rm -f {} \;
 
+      - name: Fix ssr
+        run: make dirclean
+        
       - name: Compile firmware
         run: |
           make -j$(nproc) || make -j1 V=s
