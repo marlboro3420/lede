@@ -46,7 +46,10 @@ jobs:
 
       - name: Update feeds
         run: |
-          sed -i 's/#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
+          sed -i "/helloworld/d" "feeds.conf.default"
+          echo "src-git helloworld https://github.com/fw876/helloworld.git" >> "feeds.conf.default"
+          ·/scripts/feeds update helloworld
+          ./scripts/feeds install -a -f -p helloworld
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
@@ -57,12 +60,10 @@ jobs:
         run: |
           make download -j8
           find dl -size -1024c -exec rm -f {} \;
-
-      - name: Fix ssr
-        run: make dirclean
         
       - name: Compile firmware
         run: |
+          make dirclean
           make -j$(nproc) || make -j1 V=s
           echo "======================="
           echo "Space usage:"
